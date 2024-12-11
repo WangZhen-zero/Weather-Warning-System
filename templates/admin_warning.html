@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>预警信息管理</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+    <style>
+        body {
+            padding-top: 50px;
+            font-family: 'Arial', sans-serif;
+            font-size: 1.1rem;
+            background: linear-gradient(to bottom, #0a3d91, #5e6c84); /* Aerospace color theme */
+            color: #fff;
+        }
+        .container {
+            background: rgba(0, 0, 0, 0.7); /* Dark overlay for contrast */
+            padding: 30px;
+            border-radius: 10px;
+            margin-top: 40px;
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        h1, h2 {
+            color: #fbb03b;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+            text-align: center;
+        }
+        .btn-primary, .btn-danger, .btn-return {
+            border-radius: 5px;
+            transition: all 0.3s ease;
+            font-size: 0.9rem; /* Smaller font size */
+            padding: 10px 20px; /* Reduced padding */
+        }
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+        .btn-primary:hover {
+            background-color: #0056b3;
+            border-color: #0056b3;
+        }
+        .btn-danger {
+            background-color: #e74c3c;
+            border-color: #e74c3c;
+        }
+        .btn-danger:hover {
+            background-color: #c0392b;
+            border-color: #c0392b;
+        }
+        table {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            margin-bottom: 30px;
+            width: 100%;
+            table-layout: fixed;
+        }
+        th, td {
+            text-align: center;
+            vertical-align: middle;
+            font-size: 1rem;
+            padding: 10px;
+        }
+        .section {
+            margin-bottom: 60px;
+        }
+        footer {
+            margin-top: 40px;
+            text-align: center;
+            color: #aaa;
+        }
+        .more-info-btn {
+            background-color: #2ecc71;
+            border: none;
+            color: #fff;
+            cursor: pointer;
+            border-radius: 5px;
+            padding: 10px 20px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        .more-info-btn:hover {
+            background-color: #27ae60;
+        }
+
+        .form-control {
+            font-size: 1rem;
+            padding: 10px;
+        }
+
+        .form-row {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .form-row .form-group {
+            flex: 1;
+            margin-right: 10px;
+        }
+        .form-row .form-group:last-child {
+            margin-right: 0;
+        }
+
+        /* '返回主页'  */
+        .btn-return {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            background-color: #4CAF50; 
+            border: none;
+            color: #fff;
+        }
+        .btn-return:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="text-center">预警信息管理</h1>
+
+        <form method="POST" action="{{ url_for('admin_warning') }}" class="mb-4">
+            <input type="text" name="alert_type" placeholder="预警类型" class="form-control mb-2" required>
+            <input type="text" name="severity" placeholder="预警等级" class="form-control mb-2" required>
+            <input type="text" name="location" placeholder="地点" class="form-control mb-2" required>
+            <input type="datetime-local" name="start_time" placeholder="开始时间" class="form-control mb-2" required>
+            <input type="datetime-local" name="end_time" placeholder="结束时间" class="form-control mb-2" required>
+            <textarea name="details" placeholder="详细信息" class="form-control mb-2" required></textarea>
+            <button type="submit" class="btn btn-primary">添加预警信息</button>
+        </form>
+
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <tr>
+                        <th>预警类型</th>
+                        <th>等级</th>
+                        <th>地点ID</th>
+                        <th>开始时间</th>
+                        <th>结束时间</th>
+                        <th>详情</th>
+                        <th>操作</th>
+                    </tr>
+            </thead>
+            <tbody>
+                {% for alert in alerts %}
+                <tr>
+                    <td>{{ alert[1] }}</td>
+                    <td>{{ alert[2] }}</td>
+                    <td>{{ alert[3] }}</td>
+                    <td>{{ alert[4] }}</td>
+                    <td>{{ alert[5] }}</td>
+                    <td>{{ alert[6] }}</td>
+                    <td>
+                        <!-- <a href="{{ url_for('admin_update_warning', alert_id=alert[0]) }}" class="btn btn-warning">修改</a> -->
+
+                        <form method="POST" action="{{ url_for('delete_warning') }}" style="display:inline;">
+                            <input type="hidden" name="alert_id" value="{{ alert[0] }}">
+                            <button type="submit" class="btn btn-danger">删除</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+     <!-- 固定在页面右上角的返回主页按钮 -->
+     <button class="btn btn-return" onclick="window.location.href='{{ url_for('admin_dashboard') }}';">返回主页</button>
+
+    <footer>
+        <p>© 2024 航空天气预警管理系统</p>
+    </footer>
+</body>
+</html>

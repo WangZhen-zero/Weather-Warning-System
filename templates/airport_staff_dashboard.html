@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>机场人员管理系统</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+    <style>
+        body {
+            background-image: url('{{ url_for("static", filename="images/img_bg_6.jpg") }}');
+            background-size: cover;
+            background-attachment: fixed;
+            color: #fff;
+            font-family: 'Arial', sans-serif;
+            font-size: 1.2rem;
+            text-align: center;
+        }
+        .container {
+            background: rgba(0, 0, 0, 0.8);
+            padding: 40px;
+            border-radius: 10px;
+            margin-top: 40px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        h1, h2, h3 {
+            color: #fbb03b;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+        }
+        .btn {
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+        .btn-primary, .btn-danger, .btn-secondary {
+            font-size: 1.2rem;
+            padding: 12px 25px;
+            transition: all 0.3s ease;
+        }
+        .btn-primary {
+            background-color: #fbb03b;
+            border: none;
+            color: #fff;
+        }
+        .btn-primary:hover {
+            background-color: #e67e22;
+        }
+        .btn-danger {
+            background-color: #e74c3c;
+            border: none;
+        }
+        .btn-danger:hover {
+            background-color: #c0392b;
+        }
+        .btn-secondary {
+            background-color: #333;
+            border: none;
+            color: #fff;
+            padding: 12px 25px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+        }
+        .btn-secondary:hover {
+            background-color: #555;
+        }
+        table {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            margin: 0 auto;
+            width: 100%;
+            table-layout: fixed;
+            margin-bottom: 20px;
+        }
+        th, td {
+            text-align: center;
+            vertical-align: middle;
+            font-size: 1.3rem;
+            padding: 15px;
+        }
+        .section {
+            margin-bottom: 60px;
+        }
+        footer {
+            margin-top: 40px;
+            text-align: center;
+            color: #aaa;
+        }
+        .more-info-btn, .add-info-btn {
+            background-color: #fbb03b;
+            border: none;
+            color: #fff;
+            cursor: pointer;
+            border-radius: 5px;
+            padding: 10px 20px;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+            font-size: 1.1rem;
+        }
+        .more-info-btn:hover, .add-info-btn:hover {
+            background-color: #e67e22;
+        }
+        .add-info-btn {
+            background-color: #2ecc71;
+            border: none;
+            color: #fff;
+        }
+        .add-info-btn:hover {
+            background-color: #27ae60;
+        }
+
+        .form-control {
+            font-size: 1.1rem;
+            padding: 12px 15px;
+        }
+        .btn-secondary {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 100;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-center">机场人员管理系统</h1>
+
+        <!-- 航班信息 -->
+        <div class="section">
+            <h2>航班信息</h2>
+
+            <form method="POST" action="{{ url_for('airport_staff_add_flight') }}" class="mb-4">
+                <input type="text" name="flight_number" placeholder="航班号" class="form-control mb-2" required>
+                <input type="text" name="departure" placeholder="起飞机场编号" class="form-control mb-2" required>
+                <input type="text" name="arrival" placeholder="降落机场编号" class="form-control mb-2" required>
+                <input type="datetime-local" name="scheduled_time" class="form-control mb-2" required>
+                <select name="status" class="form-control mb-2" required>
+                    <option value="On Time">准时</option>
+                    <option value="Delayed">延误</option>
+                    <option value="Cancelled">取消</option>
+                </select>
+                <button type="submit" class="btn btn-primary">添加数据</button>
+            </form>
+
+            <table class="table table-bordered table-hover table-striped">
+                <thead>
+                    <tr>
+                        <th>航班号</th>
+                        <th>起飞机场</th>
+                        <th>降落机场</th>
+                        <th>计划时间</th>
+                        <th>状态</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody id="flights-table-body">
+                    {% for flight in flights[:10] %}
+                    <tr>
+                        <td>{{ flight[1] }}</td>
+                        <td>{{ flight[2] }}</td>
+                        <td>{{ flight[3] }}</td>
+                        <td>{{ flight[4] }}</td>
+                        <td>{{ flight[5] }}</td>
+                        <td>
+                            <form method="POST" action="{{ url_for('airport_staff_delete_flight') }}" style="display: inline;">
+                                <input type="hidden" name="flight_id" value="{{ flight[0] }}">
+                                <button type="submit" class="btn btn-danger btn-sm">删除</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+
+        <!-- 机场信息 -->
+        <div class="section">
+            <h2>机场信息</h2>
+
+            <form method="POST" action="{{ url_for('airport_staff_add_airport') }}" class="mb-4">
+                <input type="text" name="airport_name" placeholder="机场名称" class="form-control mb-2" required>
+                <input type="text" name="location_code" placeholder="机场代码" class="form-control mb-2" required>
+                <input type="text" name="location" placeholder="机场位置" class="form-control mb-2" required>
+                <button type="submit" class="btn btn-primary">添加数据</button>
+            </form>
+            <table class="table table-bordered table-hover table-striped">
+                <thead>
+                    <tr>
+                        <th>机场名称</th>
+                        <th>代码</th>
+                        <th>位置</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody id="airports-table-body">
+                    {% for airport in airports[:10] %}
+                    <tr>
+                        <td>{{ airport[1] }}</td>
+                        <td>{{ airport[2] }}</td>
+                        <td>{{ airport[3] }}</td>
+                        <td>
+                            <form method="POST" action="{{ url_for('airport_staff_delete_airport') }}" style="display: inline;">
+                                <input type="hidden" name="airport_id" value="{{ airport[0] }}">
+                                <button type="submit" class="btn btn-danger btn-sm">删除</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+                <!-- 气象信息 -->
+                <div class="section">
+                    <h2>气象信息</h2>
+                    <table class="table table-bordered table-hover table-striped">
+                        <thead>
+                            <tr>
+                                <th>气象编号</th>
+                                <th>地点编号</th>
+                                <th>记录时间</th>
+                                <th>温度</th>
+                                <th>风速</th>
+                                <th>风向</th>
+                                <th>湿度</th>
+                                <th>能见度</th>
+                                <th>气压</th>
+                                
+                            </tr>
+                        </thead>
+                        <tbody id="weather-table-body">
+                            {% for weather in weather[:10] %}
+                            <tr>
+                                <td>{{ weather[0] }}</td>
+                                <td>{{ weather[1] }}</td>
+                                <td>{{ weather[2] }}</td>
+                                <td>{{ weather[3] }} °C</td>
+                                <td>{{ weather[4] }} m/s</td>
+                                <td>{{ weather[5] }} </td>
+                                <td>{{ weather[6] }} %</td>
+                                <td>{{ weather[7] }} km</td>
+                                <td>{{ weather[8] }}hPa</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+        
+                <!-- 预警信息 -->
+                <div class="section">
+                    <h2>预警信息</h2>
+                    <table class="table table-bordered table-hover table-striped">
+                        <thead>
+                            <tr>
+                                <th>预警编号</th>
+                                <th>类型</th>
+                                <th>等级</th>
+                                <th>区域</th>
+                                <th>开始时间</th>
+                                <th>结束时间</th>
+                                <th>详细信息</th>
+                            </tr>
+                        </thead>
+                        <tbody id="alerts-table-body">
+                            {% for alert in alerts[:10] %}
+                            <tr>
+                                <td>{{ alert[0] }}</td>
+                                <td>{{ alert[1] }}</td>
+                                <td>{{ alert[2] }}</td>
+                                <td>{{ alert[3] }}</td>
+                                <td>{{ alert[4] }}</td>
+                                <td>{{ alert[5] }}</td>
+                                <td>{{ alert[6] }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+        <a href="login" class="btn-secondary">退出登录</a>
+    </div>
+</body>
+</html>

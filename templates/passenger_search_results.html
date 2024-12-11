@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>旅客查询页面</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/custom.css') }}">
+    <style>
+        body {
+            background: linear-gradient(to bottom, #0a3d91, #5e6c84); /* Aerospace color theme */
+            color: #fff;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;  
+            position: relative;
+            padding-top: 50px;  
+            background-color: #ecf0f1;  
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 10px;
+            padding: 40px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            width: 80%;
+            max-width: 1000px;
+            margin-top: 50px;  /* Space from top */
+        }
+        h1, h2 {
+            color: #34495e;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
+            font-size: 2.5rem;  /* Increase font size */
+        }
+        .search-form {
+            margin-top: 20px;
+            background: #badde6;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+        }
+        .search-form label, .search-form input, .search-form select {
+            font-size: 1.2rem;  /* Increase font size for form elements */
+        }
+        .search-form .btn {
+            font-size: 1.2rem;  /* Increase font size for button */
+            padding: 12px 20px;
+        }
+        .table-container {
+            margin-top: 30px;
+        }
+        table {
+            width: 100%;
+            margin-bottom: 20px;
+            border-collapse: collapse;
+            text-align: center;
+        }
+        th, td {
+            padding: 12px;
+            border: 1px solid #141414;
+            font-size: 1.1rem; 
+        }
+        th {
+            background-color: #3d3737;
+        }
+        .btn-secondary {
+            background-color: #2c3e50;
+            color: white;
+            padding: 12px 25px;
+            border-radius: 5px;
+            text-decoration: none;
+            transition: 0.3s ease;
+            font-size: 1.2rem;  /* Increase font size */
+        }
+        .btn-secondary:hover {
+            background-color: #34495e;
+        }
+
+
+        .btn-secondary.fixed {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-center">旅客查询页面</h1>
+
+        <!-- Search Form -->
+        <div class="search-form">
+            <h2>查询数据</h2>
+            <form method="POST" action="{{ url_for('passenger_search') }}">
+                <div class="form-group">
+                    <label for="table">选择数据表:</label>
+                    <select name="table" id="table" class="form-control" required>
+                        <option value="flights">航班信息</option>
+                        <option value="airports">机场信息</option>
+                        <option value="weather">气象信息</option>
+                        <option value="alerts">预警信息</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="keyword">输入关键词:</label>
+                    <input type="text" name="keyword" id="keyword" class="form-control" placeholder="输入关键词" required>
+                </div>
+                <button type="submit" class="btn btn-primary mt-3">查询</button>
+            </form>
+        </div>
+
+        <!-- Query Results -->
+        <div class="table-container">
+            {% if results %}
+                <h2 class="mt-4">查询结果: {{ table }}</h2>
+                <table class="table table-bordered table-hover">
+                    <thead>
+                        <tr>
+                            {% if table == "flights" %}
+                                <th>航班编号</th>
+                                <th>航班名称</th>
+                                <th>起飞机场编号</th>
+                                <th>降落机场编号</th>
+                                <th>计划起飞时间</th>
+                                <th>状态</th>
+                            {% elif table == "airports" %}
+                                <th>机场编号</th>
+                                <th>机场名称</th>
+                                <th>机场代码</th>
+                                <th>位置</th>
+                            {% elif table == "weather" %}
+                                <th>气象编号</th>
+                                <th>地点编号</th>
+                                <th>时间</th>
+                                <th>温度 (°C)</th>
+                                <th>风速 (m/s)</th>
+                                <th>风向</th>
+                                <th>湿度 (%)</th>
+                                <th>能见度 (km)</th>
+                                <th>气压 (hPa)</th>
+                            {% elif table == "alerts" %}
+                                <th>预警编号</th>
+                                <th>预警类型</th>
+                                <th>等级</th>
+                                <th>地点</th>
+                                <th>开始时间</th>
+                                <th>结束时间</th>
+                                <th>详情</th>
+                            {% endif %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in results %}
+                            <tr>
+                                {% for value in row %}
+                                    <td>{{ value }}</td>
+                                {% endfor %}
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p class="text-danger">未找到匹配的结果，请调整关键词后重试。</p>
+            {% endif %}
+        </div>
+    </div>
+    <!-- 固定在右上角的返回主页按钮 -->
+    <a href="{{ url_for('passenger_dashboard') }}" class="btn-secondary fixed">返回主页</a>
+
+</body>
+</html>
