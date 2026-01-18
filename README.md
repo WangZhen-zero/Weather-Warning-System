@@ -65,5 +65,3 @@ if __name__ == '__main__':
 python app.py --mysql_pwd 0728 --db_name weather_system
 ~~~
 注意此处`mysql_pwd`也是你MySQL的root用户登录密码，`db_name`即models.py文件创建的数据库名称。
-
-#### 系统部分界面展示
