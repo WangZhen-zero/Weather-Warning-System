@@ -9,7 +9,7 @@
 
 #### 项目简介
 ​
-> 本项目为数据库开发实践大作业：航空天气预警管理系统， 基于[Flask](https://github.com/pallets/flask)框架+MySQL数据库开发，轻量简洁。
+> 本项目为数据库开发实践大作业：航空天气预警管理系统， 基于[Flask](https://github.com/pallets/flask)框架+MySQL数据库开发。
 
 #### 项目模块及功能介绍
 
